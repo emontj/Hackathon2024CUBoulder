@@ -22,35 +22,28 @@ const jobs = [
   { id: 20, title: 'Operations Manager', location: 'Salt', coords: [32.0392, 35.7272], description: 'Oversee daily operations and implement efficient processes across departments.' }
 ];
 
-
-
 // Initialize the map
-const map = L.map('map').setView([31.9539, 35.9106], 9);
+const map = L.map('map').setView([31.9539, 35.9106], 7);
 
-// Load and display OpenStreetMap tiles
+// Load OpenStreetMap tiles
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 19,
-  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  attribution: '&copy; OpenStreetMap contributors'
 }).addTo(map);
 
-// Render markers for filtered jobs
-const renderMarkers = (filteredJobs) => {
+// Render markers for jobs
+function renderMarkers(filteredJobs) {
   map.eachLayer((layer) => {
     if (layer instanceof L.Marker) layer.remove();
   });
 
   filteredJobs.forEach((job) => {
     const marker = L.marker(job.coords).addTo(map);
-    
-    marker.on('click', () => openModal(job));
+    marker.on('click', () => openModal(job.id));
   });
-};
+}
 
-// Render initial markers and job listings
-renderMarkers(jobs);
-renderJobListings(jobs);
-
-// Function to render job listings in sidebar
+// Render job listings in the sidebar with click events
 function renderJobListings(filteredJobs) {
   const jobListContainer = document.getElementById('job-listings');
   jobListContainer.innerHTML = '';
@@ -58,7 +51,9 @@ function renderJobListings(filteredJobs) {
   filteredJobs.forEach((job) => {
     const jobElement = document.createElement('div');
     jobElement.className = 'job-listing';
+    jobElement.setAttribute('data-id', job.id); // Set the job ID
     jobElement.innerHTML = `<h3>${job.title}</h3><p>${job.location}</p>`;
+    jobElement.addEventListener('click', () => openModal(job.id));
     jobListContainer.appendChild(jobElement);
   });
 }
@@ -80,21 +75,31 @@ const modal = document.getElementById('modal');
 const modalBody = document.getElementById('modal-body');
 const closeModalBtn = document.getElementById('close-modal');
 
-function openModal(job) {
-  modalBody.innerHTML = `
-    <h2>${job.title}</h2>
-    <p><strong>Location:</strong> ${job.location}</p>
-    <p><strong>Description:</strong> ${job.description}</p>
-  `;
-  modal.style.display = 'block';
+// Open modal with job details
+function openModal(jobId) {
+  const job = jobs.find((job) => job.id === jobId);
+  if (job) {
+    modalBody.innerHTML = `
+      <h2>${job.title}</h2>
+      <p><strong>Location:</strong> ${job.location}</p>
+      <p><strong>Description:</strong> ${job.description}</p>
+    `;
+    modal.style.display = 'block';
+  }
 }
 
+// Close modal event
 closeModalBtn.addEventListener('click', () => {
   modal.style.display = 'none';
 });
 
+// Close modal if clicking outside of the content
 window.addEventListener('click', (event) => {
   if (event.target === modal) {
     modal.style.display = 'none';
   }
 });
+
+// Initial render
+renderMarkers(jobs);
+renderJobListings(jobs);
