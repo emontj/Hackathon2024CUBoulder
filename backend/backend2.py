@@ -7,8 +7,14 @@ import os
 from geopy.distance import geodesic
 
 # Load the dataset from Excel
-file_path = 'backend/dassadata.xlsx'  # replace with your actual path
+file_path = 'backend/dassadata.xlsx'  # Updated path
 df = pd.read_excel(file_path)
+
+# Standardize column names by stripping whitespace
+df.columns = [col.strip() for col in df.columns]
+
+# Print column names to verify correct naming
+print("Columns in the dataset:", df.columns)
 
 # Rename latitude and longitude columns to simpler names for ease of access
 df['latitude'] = df['_Exact Location_latitude']
@@ -19,25 +25,24 @@ df['Sub-sector:'] = df['Sub-sector:'].fillna("")
 df['Please specify the business products and services'] = df['Please specify the business products and services'].fillna("")
 df['Phone Number'] = df['Phone Number'].fillna("")
 df['Number of job vacancies:'] = df['Number of job vacancies:'].fillna(0)
-df['latitude'] = df['latitude'].fillna(0)  # Assign 0 or some default value if missing
+df['latitude'] = df['latitude'].fillna(0)
 df['longitude'] = df['longitude'].fillna(0)
 
-# Map employee size descriptions to approximate numeric values
-employee_size_map = {
-    'Less than 10 employees': 5,
-    '10-50 employees': 30,
-    '50-250 employees': 150,
-    'More than 250 employees': 300
-}
-df['Enterprise size in terms of number of employees:'] = df['Enterprise size in terms of number of employees:'] \
-    .map(employee_size_map).fillna(0)
+# Standardize "Yes"/"No" columns to boolean for various filters
+df['Do you consider youth (18-29 years) from the local community for employment?'] = \
+    df['Do you consider youth (18-29 years) from the local community for employment?'].replace({'Yes': True, 'No': False}).fillna(False)
+
+df['Do you expect the need for employees in the next year?'] = \
+    df['Do you expect the need for employees in the next year?'].replace({'Yes': True, 'No': False}).fillna(False)
+
+df['Do you have any current available vacancies?'] = \
+    df['Do you have any current available vacancies?'].replace({'Yes': True, 'No': False}).fillna(False)
 
 # Define schema for Whoosh index, using the appropriate columns
 schema = Schema(
     sub_sector=TEXT(stored=True),
     business_services=TEXT(stored=True),
     phone_number=TEXT(stored=True),
-    employees=NUMERIC(stored=True),  # Now numeric after mapping
     vacancies=NUMERIC(stored=True),
     latitude=NUMERIC(stored=True, numtype=float),
     longitude=NUMERIC(stored=True, numtype=float),
@@ -58,7 +63,6 @@ for _, row in df.iterrows():
             sub_sector=row['Sub-sector:'],
             business_services=row['Please specify the business products and services'],
             phone_number=str(row['Phone Number']),
-            employees=row['Enterprise size in terms of number of employees:'],
             vacancies=row['Number of job vacancies:'],
             latitude=row['latitude'],
             longitude=row['longitude']
@@ -83,8 +87,9 @@ def query_dataset(
     latitude=None,
     longitude=None,
     max_distance_km=None,
-    min_employees=None,
-    max_employees=None
+    consider_youth=None,  # Parameter for filtering by youth employment consideration
+    need_employees_next_year=None,  # Parameter for filtering by future employment needs
+    has_vacancies=None  # Parameter for filtering by current vacancies
 ):
     # Perform text search if a text query is provided
     if text_query:
@@ -101,34 +106,44 @@ def query_dataset(
     if latitude is not None and longitude is not None and max_distance_km is not None:
         result_df = filter_by_proximity(result_df, latitude, longitude, max_distance_km)
 
-    # Filter by employee range if min_employees or max_employees are specified
-    # NOTE: not working
-    # if min_employees is not None:
-    #     result_df = result_df[result_df['Enterprise size in terms of number of employees:'] >= min_employees]
-    # if max_employees is not None:
-    #     result_df = result_df[result_df['Enterprise size in terms of number of employees:'] <= max_employees]
+    # Filter by consideration for youth employment if specified
+    print(result_df.columns)
+    if consider_youth is not None:
+        result_df = result_df[result_df['Do you consider youth (18-29 years) from the local community for employment?'] == consider_youth]
+
+    # Filter by future employment needs if specified
+    if need_employees_next_year is not None:
+        result_df = result_df[result_df['Do you expect the need for employees in the next year?'] == need_employees_next_year]
+
+    # Filter by current vacancies if specified
+    if has_vacancies is not None:
+        result_df = result_df[result_df['Do you have any current available vacancies?'] == has_vacancies]
 
     return result_df
 
-if __name__ == '__main__':
+# Tests in the main block
+if __name__ == "__main__":
     # 1. Query by proximity only (within 10 km radius)
     proximity_results = query_dataset(latitude=31.95, longitude=35.91, max_distance_km=10)
     print("Proximity-Only Results:")
     print(proximity_results)
 
-    # 2. Query by proximity and employee size range
-    filtered_results = query_dataset(latitude=31.95, longitude=35.91, max_distance_km=10, min_employees=5, max_employees=50)
-    print("\nProximity and Employee Range Results:")
+    # 2. Query by proximity, youth employment consideration, and vacancies
+    filtered_results = query_dataset(
+        latitude=31.95, longitude=35.91, max_distance_km=10, consider_youth=True, has_vacancies=True
+    )
+    print("\nProximity, Youth Employment, and Vacancies Results:")
     print(filtered_results)
 
-    # 3. Query by text, proximity, and employee size range
+    # 3. Full query: text, proximity, youth employment, future hiring plans, and current vacancies
     full_query_results = query_dataset(
         text_query="بيع قطع سيارات جديدة و مستخدمة",
         latitude=31.95,
         longitude=35.91,
         max_distance_km=10,
-        min_employees=5,
-        max_employees=50
+        consider_youth=True,
+        need_employees_next_year=True,
+        has_vacancies=True
     )
-    print("\nFull Query Results (Text, Proximity, Employee Range):")
+    print("\nFull Query Results (Text, Proximity, Youth Employment, Future Hiring, Current Vacancies):")
     print(full_query_results)
