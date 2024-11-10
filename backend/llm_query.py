@@ -45,16 +45,15 @@ def generate_search_parameters(client, user_query):
 
     return message
 
-def get_json_object():
+def get_json_object(user_query : str):
     with open('./backend/api_sk.txt', 'r') as file:
         secret_key = file.read() # just don't want my SK on git
 
     client = OpenAI(api_key=secret_key) # NOTE: api key is a demo and won't always work
-    user_query = "Show me small car repair businesses in Maan that are recruiting for seasonal employees."
     generated_json = generate_search_parameters(client, user_query)
 
     return generated_json # TODO: need to make into json object depending on backend?
 
 # Example usage
 if __name__ == '__main__':
-    print(get_json_object())
+    print(get_json_object('Show me small car repair businesses in Maan that are recruiting for seasonal employees.'))
