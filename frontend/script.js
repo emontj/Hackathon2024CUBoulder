@@ -236,6 +236,17 @@ const modal = document.getElementById('modal');
 const modalBody = document.getElementById('modal-body');
 const closeModalBtn = document.getElementById('close-modal');
 
+document.getElementById("toggle-advanced-search").addEventListener("click", function () {
+  const advancedSearchForm = document.getElementById("advanced-search-form");
+  if (advancedSearchForm.style.display === "none" || advancedSearchForm.style.display === "") {
+    advancedSearchForm.style.display = "block";
+    this.textContent = "Hide Advanced Search";
+  } else {
+    advancedSearchForm.style.display = "none";
+    this.textContent = "Show Advanced Search";
+  }
+});
+
 // Close modal event
 closeModalBtn.addEventListener('click', () => {
   modal.style.display = 'none';

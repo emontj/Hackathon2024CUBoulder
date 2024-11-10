@@ -12,6 +12,85 @@
     <div id="map" class="map"></div>
     <div class="sidebar">
       <input type="text" id="search" placeholder="Search Jobs with AI" />
+      
+      <hr class="divider" />
+      <p class="or-text">Advanced Search</p>
+
+      <button id="toggle-advanced-search">Show Advanced Search</button>
+  
+      <!-- Advanced Search Options (Initially Hidden) -->
+      <form id="advanced-search-form" style="display: none;">
+        <!-- Location & Distance -->
+        <label for="location">Location:</label>
+        <input type="text" id="location" placeholder="Enter location coordinates" />
+  
+        <label for="distance">Distance (km):</label>
+        <input type="number" id="distance" placeholder="Distance from location" min="0" />
+  
+        <!-- Start and End Date -->
+        <label for="start-date">Start Date:</label>
+        <input type="date" id="start-date" />
+  
+        <label for="end-date">End Date:</label>
+        <input type="date" id="end-date" />
+  
+        <!-- Sector and Subsector -->
+        <label for="sector">Sector of Work:</label>
+        <select id="sector">
+          <option value="">Select Sector</option>
+          <option value="technology">Technology</option>
+          <option value="healthcare">Healthcare</option>
+        </select>
+  
+        <label for="subsector">Subsector:</label>
+        <select id="subsector">
+          <option value="">Select Subsector</option>
+          <option value="software">Software Development</option>
+          <option value="nursing">Nursing</option>
+        </select>
+  
+        <!-- Governorat and District -->
+        <label for="governorat">Governorat:</label>
+        <select id="governorat">
+          <option value="">Select Governorat</option>
+          <option value="north">North</option>
+          <option value="south">South</option>
+        </select>
+  
+        <label for="district">District:</label>
+        <select id="district">
+          <option value="">Select District</option>
+          <option value="district1">District 1</option>
+          <option value="district2">District 2</option>
+        </select>
+  
+        <!-- Business Name -->
+        <label for="business-name">Business Name:</label>
+        <input type="text" id="business-name" placeholder="Enter business name" />
+  
+        <!-- Checkboxes for Filters -->
+        <div class="checkboxes">
+          <label>
+            <input type="checkbox" id="has-vacancies" />
+            Has Vacancies
+          </label>
+          <label>
+            <input type="checkbox" id="allows-youth" />
+            Allows Youth (18-29)
+          </label>
+          <label>
+            <input type="checkbox" id="expect-need" />
+            Expect Need for Employees in the Next Year
+          </label>
+        </div>
+  
+        <!-- Submit Button -->
+        <button type="submit">Search</button>
+      </form>
+      
+      <hr class="divider" />
+      <p class="or-text">Job Postings</p>
+
       <div id="job-listings" class="job-listings"></div>
     </div>
   </div>
