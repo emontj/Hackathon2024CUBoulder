@@ -274,7 +274,7 @@ function submitCompanyModalForm() {
   };
 
   // Send JSON data to the server
-  fetch("https://your-server-url.com/api/jobs", {
+  fetch("http://127.0.0.1:5002/new_job", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
@@ -290,7 +290,7 @@ function submitCompanyModalForm() {
   .catch(error => {
     // Handle error
     console.error("Error submitting new record:", error);
-    alert("There was an error adding the record. Please try again.");
+    // alert("There was an error adding the record. Please try again.");
   });
 
   // Close the modal
