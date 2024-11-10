@@ -39,14 +39,20 @@ def generate_search_parameters(client, user_query):
     
     # Extract and return the generated JSON response
 
-    message = completion.choices[0].message.content
+    message = str(completion.choices[0].message.content)
     message.replace('```json', '')
     message.replace('```', '')
+    message.replace('```json', '')
+    message.replace('```', '')
+    
     return message
 
 # Example usage
 if __name__ == '__main__':
-    client = OpenAI(api_key='') # NOTE: api key is a demo and won't always work
+    with open('./backend/api_sk.txt', 'r') as file:
+        secret_key = file.read() # just don't want my SK on git
+
+    client = OpenAI(api_key=secret_key) # NOTE: api key is a demo and won't always work
     user_query = "Show me small car repair businesses in Maan that are recruiting for seasonal employees."
     generated_json = generate_search_parameters(client, user_query)
     print(generated_json)
