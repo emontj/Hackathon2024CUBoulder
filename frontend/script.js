@@ -196,6 +196,44 @@ function clear() {
   clearJobPostings();
 }
 
+async function makeAiQuery(inputString) {
+  try {
+      const response = await fetch("http://127.0.0.1:5002/ai_query", {
+          method: "POST",
+          headers: {
+              "Accept": "application/json",
+              "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ input: inputString })
+      });
+
+      if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const responseData = await response.json();
+      console.log("Response received:", responseData);
+      return responseData;
+  } catch (error) {
+      console.error("Error:", error);
+      return null;
+  }
+}
+
+function performAiSearch() {
+  // Get the value from the input element with id "search"
+  const searchInput = document.getElementById("search").value;
+
+  // Call makeAiQuery with the input value
+  makeAiQuery(searchInput).then(responseData => {
+      // Process the response data as needed
+      if (responseData) {
+          console.log("AI Query Response:", responseData);
+          // TODO: display results
+      }
+  });
+}
+
 // TEST
 // const myData = {
 //   district: ["Ash-Shobek", "Koorah"],
@@ -251,7 +289,6 @@ map.on('click', function (event) {
   }
 });
 
-
 // Load OpenStreetMap tiles
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 19,
@@ -270,43 +307,57 @@ document.getElementById('search').addEventListener('input', (event) => {
   renderJobListings(filteredJobs);
 });
 
-async function makeAiQuery(inputString) {
-  try {
-      const response = await fetch("http://127.0.0.1:5002/ai_query", {
-          method: "POST",
-          headers: {
-              "Accept": "application/json",
-              "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ input: inputString })
-      });
+document.getElementById('advanced-search-form').addEventListener('submit', function (e) {
+  e.preventDefault();
 
-      if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-      }
+  // Gather form values
+  const coordinates = document.getElementById('coordinates').value.split(',');
+  const latitude = coordinates[0];
+  const longitude = coordinates[1];
+  const distance = document.getElementById('distance').value;
+  const sector = document.getElementById('sector').value;
+  const subsector = document.getElementById('subsector').value;
+  const governorat = document.getElementById('governorat').value;
+  const district = document.getElementById('district').value;
+  const businessName = document.getElementById('business-name').value;
+  const hasVacancies = document.getElementById('has-vacancies').checked;
+  const allowsYouth = document.getElementById('allows-youth').checked;
+  const expectNeed = document.getElementById('expect-need').checked;
 
-      const responseData = await response.json();
-      console.log("Response received:", responseData);
-      return responseData;
-  } catch (error) {
-      console.error("Error:", error);
-      return null;
-  }
-}
+  // Construct the query URL
+  const queryUrl = new URL('http://127.0.0.1:5002/advanced_search');
+  queryUrl.searchParams.append('latitude', latitude);
+  queryUrl.searchParams.append('longitude', longitude);
+  queryUrl.searchParams.append('distance', distance);
+  if (sector) queryUrl.searchParams.append('sector', sector);
+  if (subsector) queryUrl.searchParams.append('subsector', subsector);
+  if (governorat) queryUrl.searchParams.append('governorat', governorat);
+  if (district) queryUrl.searchParams.append('district', district);
+  if (businessName) queryUrl.searchParams.append('business_name', businessName);
+  queryUrl.searchParams.append('has_vacancies', hasVacancies);
+  queryUrl.searchParams.append('allows_youth', allowsYouth);
+  queryUrl.searchParams.append('expect_need', expectNeed);
 
-function performAiSearch() {
-  // Get the value from the input element with id "search"
-  const searchInput = document.getElementById("search").value;
+  // Send the GET request to Flask
+  fetch(queryUrl)
+      .then(response => response.json())
+      .then(data => {
+          console.log(data);  // For debugging: log the returned data
 
-  // Call makeAiQuery with the input value
-  makeAiQuery(searchInput).then(responseData => {
-      // Process the response data as needed
-      if (responseData) {
-          console.log("AI Query Response:", responseData);
-          // TODO: display results
-      }
-  });
-}
+          // Clear any previous results
+          // const resultsContainer = document.getElementById('results');
+          // resultsContainer.innerHTML = '';
+
+          // Display the results
+          // data.forEach(row => {
+          //     const rowElement = document.createElement('div');
+          //     rowElement.classList.add('result-item');
+          //     rowElement.textContent = JSON.stringify(row);
+          //     resultsContainer.appendChild(rowElement);
+          // });
+      })
+      .catch(error => console.error('Error:', error));
+});
 
 // Modal functionality
 const modal = document.getElementById('modal');
