@@ -9,7 +9,7 @@ from backend.llm_query import ai_query
 from backend.backend3 import advanced_search
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True, methods=["GET", "POST", "OPTIONS", "PUT", "DELETE"], allow_headers=["Content-Type"])
 df = pd.read_excel('./backend/dassadata.xlsx')
 
 # Route for a simple "Hello, World!" response
@@ -41,6 +41,47 @@ def make_ai_query():
     else:
         # Return an error message if the 'input' key is missing
         return jsonify({"error": "Missing 'input' in request data"}), 400
+
+@app.route('/new-record', methods=['POST'])
+def new_record():
+    # Get the JSON data from the request
+    data = request.get_json()
+
+    # Define the required columns for validation
+    required_columns = [
+        "Business Phone Number (If applicable)", "Business name:", "Current//Areas of recruitment:/Customer Service Representatives",
+        "Current//Areas of recruitment:/Sales", "Current//Please specify", "Current//Priority areas of recruitment:/Administrative Staff",
+        "Current//Priority areas of recruitment:/Finance", "Current//Priority areas of recruitment:/Information Technology (IT)",
+        "Current//Priority areas of recruitment:/Marketing", "Current//Priority areas of recruitment:/Operational Staff (logistics and supply chain)",
+        "Current//Priority areas of recruitment:/Others", "Current//Priority areas of recruitment:/Technical Staff",
+        "Current//Types of positions available:/Entry level", "Current//Types of positions available:/Interns",
+        "Current//Types of positions available:/Mid-senior level", "Current//Types of positions available:/Seasonal employees",
+        "Current//Types of positions available:/Senior management level", "District", 
+        "Do you consider youth (18-29 years) from the local community for employment?",
+        "Do you expect the need for employees in the next year?", "Do you have any current available vacancies?",
+        "Economic sector:", "Enterprise size (Micro, Small, Medium, Large)", "Enterprise size in terms of number of employees:",
+        "Future//Areas of recruitment:/Customer Service Representatives", "Future//Areas of recruitment:/Sales", 
+        "Future//Please specify", "Future//Priority areas of recruitment:/Administrative Staff", 
+        "Future//Priority areas of recruitment:/Finance", "Future//Priority areas of recruitment:/Information Technology (IT)", 
+        "Future//Priority areas of recruitment:/Marketing", "Future//Priority areas of recruitment:/Operational Staff (logistics and supply chain)",
+        "Future//Priority areas of recruitment:/Others", "Future//Priority areas of recruitment:/Technical Staff", 
+        "Future//TOTAL", "Future//Types of positions available:/Entry level", "Future//Types of positions available:/Interns",
+        "Future//Types of positions available:/Mid-senior level", "Future//Types of positions available:/Seasonal employees",
+        "Future//Types of positions available:/Senior management level", "Governorat", "Is the company registered", 
+        "Number of expected job vacancies:", "Number of job vacancies:", "Phone Number", 
+        "Please specify the business products and services", "Sub-sector:", "What is the Type of registration?",
+        "end", "start", "today", "_Exact Location_latitude", "_Exact Location_longitude", "_id"
+    ]
+
+    # Check for missing fields in the incoming data
+    missing_fields = [field for field in required_columns if field not in data]
+    if missing_fields:
+        return jsonify({"error": f"Missing fields: {', '.join(missing_fields)}"}), 400
+
+    # Append the new record to the DataFrame
+    global df
+    new_row = pd.DataFrame([data], columns=required_columns)
+    df = pd.concat([df, new_row], ignore_index=True)
 
 # Route that receives a JSON object and dynamically filters the DataFrame
 @app.route('/query', methods=['POST'])
@@ -102,7 +143,7 @@ def perform_advanced_search():
     # Column name mapping from current DataFrame columns to desired JSON schema
     column_mapping = {
         'phone_number': 'Phone Number',
-        'business_name': 'Business name:',
+        'business_name:': 'Business name:',
         'district': 'District',
         'do_you_consider_youth_18-29_years_from_the_local_community_for_employment': 'Do you consider youth (18-29 years) from the local community for employment?',
         'do_you_expect_the_need_for_employees_in_the_next_year': 'Do you expect the need for employees in the next year?',
@@ -114,7 +155,7 @@ def perform_advanced_search():
         'number_of_job_vacancies': 'Number of job vacancies:',
         'enterprise_size': 'Enterprise size (Micro, Small, Medium, Large)',
         'please_specify_the_business_products_and_services': 'Please specify the business products and services',
-        'title' : 'Title'
+        'governorat' : 'Governorat'
     }
 
     # Replace NaN and infinite values in DataFrame with None, if results are a DataFrame
