@@ -35,9 +35,13 @@ def make_ai_query():
         
         # Pass the input text to the ai_query function
         output = ai_query(input_text)
-        
-        # Return the output as a JSON response
-        return jsonify({"output": output})
+
+        # Call process_json with the generated filters
+        with app.test_request_context('/query', json=output):
+            response = process_json()
+
+            return response  # Return the result from process_json directly
+
     else:
         # Return an error message if the 'input' key is missing
         return jsonify({"error": "Missing 'input' in request data"}), 400
@@ -87,18 +91,24 @@ def new_record():
 @app.route('/query', methods=['POST'])
 def process_json():
     # Get the JSON data from the request
-    data = request.get_json()
-    print("Received JSON data:", data)  # Debugging line to print received JSON data
+    try:
+        data = request.get_json(force=True)
+
+        if isinstance(data, str):
+            data = json.loads(data)
+        print("Received JSON data:", data)  # Debugging line to print received JSON data
+    except Exception as e:
+        return jsonify({"message": "Invalid JSON format.", "status": "error"}), 400
 
     # Start with the full DataFrame and apply filters dynamically based on JSON keys
-    filtered_df = df
+    filtered_df = df.copy()
 
-# Apply filters for each key-value pair in the JSON data
+    # Apply filters for each key-value pair in the JSON data
     for key, value in data.items():
-        if value:
+        if value is not None:
             # Check if the column exists in the DataFrame
             if key in df.columns:
-                # Handle case where the filter value is a list (e.g., ["Ash-Shobek", "Koorah"])
+                # Handle case where the filter value is a list
                 if isinstance(value, list):
                     filtered_df = filtered_df[filtered_df[key].isin(value)]
                 elif pd.api.types.is_string_dtype(df[key]):
@@ -108,7 +118,8 @@ def process_json():
             else:
                 print(f"Warning: Column '{key}' not found in DataFrame")
 
-    results = filtered_df.to_dict(orient='records')
+    # Convert NaNs to None and return JSON response
+    results = filtered_df.replace({np.nan: None}).to_dict(orient='records')
     return jsonify({
         "message": "Filtered data returned.",
         "status": "success",
