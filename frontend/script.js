@@ -67,35 +67,65 @@ function openModal(jobId, jobs) {
   const job = jobs.find((job) => job["_id"] === jobId);
   if (job) {
     modalBody.innerHTML = `
-      <h1>${job["Business name:"]}</h1>
-      <p><strong>Job ID:</strong> ${job["_id"]}</p>
-      <p>${job["Please specify the business products and services"]}</p>
+      <!-- Main Title -->
+      <h1 class="animate__animated animate__fadeInDown" style="animation-delay: 100ms;">${job["Business name:"]}</h1>
+      
+      <!-- Job ID and Description -->
+      <div>
+        <h3 class="animate__animated animate__fadeInUp" style="animation-delay: 200ms;">Job Details</h3>
+        <div class="animate__animated animate__fadeInRight" style="animation-delay: 300ms;">
+          <p><strong>Job ID:</strong> ${job["_id"]}</p>
+          <p>${job["Please specify the business products and services"]}</p>
+        </div>
+      </div>
 
-      <h3>Recruitment Information</h3>
-      <p><strong>Consider Youth (18-29):</strong> ${job["Do you consider youth (18-29 years) from the local community for employment?"]}</p>
-      <p><strong>Expect Employee Need Next Year:</strong> ${job["Do you expect the need for employees in the next year?"]}</p>
-      <p><strong>Expected Job Vacancies:</strong> ${job["Number of expected job vacancies:"]}</p>
+      <hr class="divider animate__animated animate__fadeInDown" />
 
-      <h3>Current Recruitment</h3>
-      <p><strong>Technical Staff:</strong> ${job["Current//Priority areas of recruitment:/Technical Staff"]}</p>
-      <p><strong>Other Positions:</strong> ${job["Current//Priority areas of recruitment:/Others"]}</p>
-      <p><strong>Specify Other:</strong> ${job["Current//Please specify"]}</p>
-      <p><strong>Interns:</strong> ${job["Current//Types of positions available:/Interns"]}</p>
-      <p><strong>Seasonal Employees:</strong> ${job["Current//Types of positions available:/Seasonal employees"]}</p>
-      <p><strong>Entry Level:</strong> ${job["Current//Types of positions available:/Entry level"]}</p>
-      <p><strong>Mid-Senior Level:</strong> ${job["Current//Types of positions available:/Mid-senior level"]}</p>
-      <p><strong>Senior Management Level:</strong> ${job["Current//Types of positions available:/Senior management level"]}</p>
+      <!-- Recruitment Information Section -->
+      <div>
+        <h3 class="animate__animated animate__fadeInUp" style="animation-delay: 400ms;">Recruitment Information</h3>
+        <div class="animate__animated animate__fadeInRight" style="animation-delay: 500ms;">
+          <p><strong>Consider Youth (18-29):</strong> ${job["Do you consider youth (18-29 years) from the local community for employment?"]}</p>
+          <p><strong>Expect Employee Need Next Year:</strong> ${job["Do you expect the need for employees in the next year?"]}</p>
+          <p><strong>Expected Job Vacancies:</strong> ${job["Number of expected job vacancies:"]}</p>
+        </div>
+      </div>
 
-      <h3>Future Recruitment</h3>
-      <p><strong>Future Technical Staff:</strong> ${job["Future//Priority areas of recruitment:/Technical Staff"]}</p>
-      <p><strong>Future Other Positions:</strong> ${job["Future//Priority areas of recruitment:/Others"]}</p>
-      <p><strong>Specify Future Other:</strong> ${job["Future//Please specify"]}</p>
+      <hr class="divider animate__animated animate__fadeInDown" />
+
+      <!-- Current Recruitment Section -->
+      <div>
+        <h3 class="animate__animated animate__fadeInUp" style="animation-delay: 600ms;">Current Recruitment</h3>
+        <div class="animate__animated animate__fadeInRight" style="animation-delay: 700ms;">
+          <p><strong>Technical Staff:</strong> ${job["Current//Priority areas of recruitment:/Technical Staff"]}</p>
+          <p><strong>Other Positions:</strong> ${job["Current//Priority areas of recruitment:/Others"]}</p>
+          <p><strong>Specify Other:</strong> ${job["Current//Please specify"]}</p>
+          <p><strong>Interns:</strong> ${job["Current//Types of positions available:/Interns"]}</p>
+          <p><strong>Seasonal Employees:</strong> ${job["Current//Types of positions available:/Seasonal employees"]}</p>
+          <p><strong>Entry Level:</strong> ${job["Current//Types of positions available:/Entry level"]}</p>
+          <p><strong>Mid-Senior Level:</strong> ${job["Current//Types of positions available:/Mid-senior level"]}</p>
+          <p><strong>Senior Management Level:</strong> ${job["Current//Types of positions available:/Senior management level"]}</p>
+        </div>
+      </div>
+
+      <hr class="divider animate__animated animate__fadeInDown" />
+
+      <!-- Future Recruitment Section -->
+      <div>
+        <h3 class="animate__animated animate__fadeInUp" style="animation-delay: 800ms;">Future Recruitment</h3>
+        <div class="animate__animated animate__fadeInRight" style="animation-delay: 900ms;">
+          <p><strong>Future Technical Staff:</strong> ${job["Future//Priority areas of recruitment:/Technical Staff"]}</p>
+          <p><strong>Future Other Positions:</strong> ${job["Future//Priority areas of recruitment:/Others"]}</p>
+          <p><strong>Specify Future Other:</strong> ${job["Future//Please specify"]}</p>
+        </div>
+      </div>
     `;
 
+    // Display the modal
     modal.style.display = 'block';
+    modal.scrollTop = 0;
   }
 }
-
 
 async function contactServer(data) {
   try {
