@@ -223,7 +223,6 @@ body, html {
   }
 }
 
-
 .close-btn {
   position: absolute;
   top: 10px;
@@ -255,4 +254,47 @@ body, html {
 }
 .menu-bar a:hover {
   text-decoration: underline;
+}
+
+/* Modal Content Layout */
+.form-group {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* Label Transition Styling */
+.form-group label {
+  font-size: 1em;
+  color: #333;
+  margin-bottom: 5px;
+  transition: color 0.3s ease, font-size 0.3s ease;
+}
+
+/* Input and Textarea Styling */
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Input Focus Effect */
+.form-group input[type="text"]:focus,
+.form-group input[type="number"]:focus,
+.form-group textarea:focus {
+  border-color: #007BFF;
+  box-shadow: 0 0 8px rgba(0, 123, 255, 0.3);
+}
+
+/* Label Style on Focus */
+.form-group input[type="text"]:focus + label,
+.form-group input[type="number"]:focus + label,
+.form-group textarea:focus + label {
+  color: #007BFF;
+  font-size: 1.1em;
 }

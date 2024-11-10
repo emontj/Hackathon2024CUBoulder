@@ -82,19 +82,6 @@ def get_all_data():
     print("Returning entire DataFrame")  # Debugging line to print to console
     return jsonify(all_data)
 
-import json
-from flask import Response
-
-import json
-from flask import Response
-import pandas as pd
-import numpy as np
-
-import json
-from flask import Response
-import pandas as pd
-import numpy as np
-
 @app.route('/advanced_search', methods=['GET'])
 def perform_advanced_search():
     # Call advanced_search with the parameters from the request
@@ -124,12 +111,10 @@ def perform_advanced_search():
         'subsector': 'Sub-sector:',
         '_exact_location_latitude': '_Exact Location_latitude',
         '_exact_location_longitude': '_Exact Location_longitude',
-        # Add mappings for all other required fields based on the schema you provided
-        # Example:
         'number_of_job_vacancies': 'Number of job vacancies:',
         'enterprise_size': 'Enterprise size (Micro, Small, Medium, Large)',
         'please_specify_the_business_products_and_services': 'Please specify the business products and services',
-        # Continue with any additional mappings...
+        'title' : 'Title'
     }
 
     # Replace NaN and infinite values in DataFrame with None, if results are a DataFrame

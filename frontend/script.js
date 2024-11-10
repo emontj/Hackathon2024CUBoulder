@@ -131,6 +131,179 @@ function openModal(jobId, jobs) {
   }
 }
 
+function companyModal() {
+  const newJobId = new Date().toISOString().replace(/[-:.TZ]/g, '').slice(0, 14); // Format as YYYYMMDDHHMMSS
+
+  // Populate modal body with form fields
+  modalBody.innerHTML = `
+    <h1 class="animate__animated animate__fadeInDown" style="animation-delay: 100ms;">Add New Job Record</h1>
+    
+    <div class="form-group">
+      <label>Job ID:</label>
+      <input type="text" id="job-id" value="${newJobId}" readonly />
+    </div>
+    
+    <div class="form-group">
+      <label>Business Name:</label>
+      <input type="text" id="business-name" />
+    </div>
+    
+    <div class="form-group">
+      <label>Business Products and Services:</label>
+      <textarea id="business-services"></textarea>
+    </div>
+
+    <hr class="divider animate__animated animate__fadeInDown" />
+
+    <div class="form-group">
+      <label>Consider Youth (18-29):</label>
+      <input type="text" id="consider-youth" />
+    </div>
+
+    <div class="form-group">
+      <label>Expect Employee Need Next Year:</label>
+      <input type="text" id="expect-need" />
+    </div>
+
+    <div class="form-group">
+      <label>Number of Expected Job Vacancies:</label>
+      <input type="number" id="expected-vacancies" />
+    </div>
+
+    <hr class="divider animate__animated animate__fadeInDown" />
+
+    <div class="form-group">
+      <label>Technical Staff:</label>
+      <input type="text" id="technical-staff" />
+    </div>
+
+    <div class="form-group">
+      <label>Other Positions:</label>
+      <input type="text" id="other-positions" />
+    </div>
+
+    <div class="form-group">
+      <label>Specify Other:</label>
+      <input type="text" id="specify-other" />
+    </div>
+
+    <div class="form-group">
+      <label>Interns:</label>
+      <input type="text" id="interns" />
+    </div>
+
+    <div class="form-group">
+      <label>Seasonal Employees:</label>
+      <input type="text" id="seasonal-employees" />
+    </div>
+
+    <div class="form-group">
+      <label>Entry Level:</label>
+      <input type="text" id="entry-level" />
+    </div>
+
+    <div class="form-group">
+      <label>Mid-Senior Level:</label>
+      <input type="text" id="mid-senior-level" />
+    </div>
+
+    <div class="form-group">
+      <label>Senior Management Level:</label>
+      <input type="text" id="senior-management-level" />
+    </div>
+
+    <hr class="divider animate__animated animate__fadeInDown" />
+
+    <div class="form-group">
+      <label>Future Technical Staff:</label>
+      <input type="text" id="future-technical-staff" />
+    </div>
+
+    <div class="form-group">
+      <label>Future Other Positions:</label>
+      <input type="text" id="future-other-positions" />
+    </div>
+
+    <div class="form-group">
+      <label>Specify Future Other:</label>
+      <input type="text" id="future-specify-other" />
+    </div>
+
+    <div style="text-align: center; margin-top: 20px;">
+      <button onclick="submitCompanyModalForm()" class="button">Submit</button>
+    </div>
+  `;
+
+  // Display the modal
+  modal.style.display = 'block';
+
+  modal.scrollTop = 0;
+  modalBody.scrollTop = 0;
+}
+
+// Handle form submission
+// Handle form submission
+function submitCompanyModalForm() {
+  // Retrieve values from form inputs
+  const newRecord = {
+    jobId: document.getElementById("job-id").value,
+    businessName: document.getElementById("business-name").value,
+    businessServices: document.getElementById("business-services").value,
+    considerYouth: document.getElementById("consider-youth").value,
+    expectNeed: document.getElementById("expect-need").value,
+    expectedVacancies: document.getElementById("expected-vacancies").value,
+    technicalStaff: document.getElementById("technical-staff").value,
+    otherPositions: document.getElementById("other-positions").value,
+    specifyOther: document.getElementById("specify-other").value,
+    interns: document.getElementById("interns").value,
+    seasonalEmployees: document.getElementById("seasonal-employees").value,
+    entryLevel: document.getElementById("entry-level").value,
+    midSeniorLevel: document.getElementById("mid-senior-level").value,
+    seniorManagementLevel: document.getElementById("senior-management-level").value,
+    futureTechnicalStaff: document.getElementById("future-technical-staff").value,
+    futureOtherPositions: document.getElementById("future-other-positions").value,
+    futureSpecifyOther: document.getElementById("future-specify-other").value,
+    
+    // Additional fields to complete the record
+    location: document.getElementById("location") ? document.getElementById("location").value : "",
+    sector: document.getElementById("sector") ? document.getElementById("sector").value : "",
+    district: document.getElementById("district") ? document.getElementById("district").value : "",
+    governorat: document.getElementById("governorat") ? document.getElementById("governorat").value : "",
+    startDate: document.getElementById("start-date") ? document.getElementById("start-date").value : "",
+    endDate: document.getElementById("end-date") ? document.getElementById("end-date").value : ""
+  };
+
+  // Send JSON data to the server
+  fetch("https://your-server-url.com/api/jobs", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(newRecord)
+  })
+  .then(response => response.json())
+  .then(data => {
+    // Handle successful response
+    console.log("Server response:", data);
+    alert("New record added successfully!");
+  })
+  .catch(error => {
+    // Handle error
+    console.error("Error submitting new record:", error);
+    alert("There was an error adding the record. Please try again.");
+  });
+
+  // Close the modal
+  modal.style.display = 'none';
+}
+
+
+// Close the modal when the close button is clicked
+document.getElementById("close-modal").addEventListener("click", function () {
+  modal.style.display = 'none';
+});
+
+
 async function contactServer(data) {
   try {
       const response = await fetch("http://127.0.0.1:5002/query", {
