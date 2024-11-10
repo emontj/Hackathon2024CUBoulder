@@ -1,7 +1,7 @@
 import pandas as pd
 
 # Load the Excel file into a DataFrame
-df = pd.read_excel('backend/dassadata.xlsx')
+df = pd.read_excel('/Users/maximusmontano/Hackathon2024CUBoulder/backend/dassadata.xlsx')
 
 # Loop through each column and print distinct values if there are fewer than 20
 for col in df.columns:
