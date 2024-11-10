@@ -13,6 +13,7 @@
     <div id="map" class="map"></div>
     <div class="sidebar">
       <input type="text" id="search" placeholder="Search Jobs with AI" />
+      <button class='button' onclick="performAiSearch()">Search with AI</button>
       
       <hr class="divider" />
       <p class="or-text">Advanced Search</p>
@@ -23,7 +24,14 @@
       <form id="advanced-search-form" style="display: none;">
         <!-- Location & Distance -->
         <label for="location">Location:</label>
-        <input type="text" id="location" placeholder="Enter location coordinates" />
+        <!-- <input type="text" id="location" placeholder="Enter location coordinates" /> -->
+        <div id="pick-coordinates-btn" class="button">Pick Coordinates</div>
+
+        <div id="coordinate-display">
+          <!-- Label and input box for displaying selected coordinates -->
+          <label for="coordinates">Your Coordinates:</label>
+          <input type="text" id="coordinates" readonly />
+        </div>
   
         <label for="distance">Distance (km):</label>
         <input type="number" id="distance" placeholder="Distance from location" min="0" />

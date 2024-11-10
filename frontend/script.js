@@ -22,6 +22,8 @@
 //   { id: 20, title: 'Operations Manager', location: 'Salt', coords: [32.0392, 35.7272], description: 'Oversee daily operations and implement efficient processes across departments.' }
 // ];
 
+const pickCoordinatesBtn = document.getElementById('pick-coordinates-btn');
+
 // Render markers for jobs with opacity variance
 function renderMarkers(filteredJobs) {
   // Clear existing markers
@@ -207,6 +209,15 @@ async function main() {
     
     renderMarkers(jobs);
     renderJobListings(jobs);
+
+    // Button to toggle coordinate-picking mode
+    pickCoordinatesBtn.addEventListener('click', () => {
+      // Toggle the mode on button click
+      isPickingCoordinates = !isPickingCoordinates;
+
+      // Update button text based on mode
+      pickCoordinatesBtn.textContent = isPickingCoordinates ? 'Cancel Picking' : 'Pick Coordinates';
+    });
   } catch (error) {
     console.error("Error fetching jobs:", error);
   }
@@ -220,6 +231,26 @@ async function main() {
 
 // Initialize the map
 const map = L.map('map').setView([31.9539, 35.9106], 7);
+
+let isPickingCoordinates = false; // Track if we're in "Pick Coordinates" mode
+
+// Add click event on the map to capture coordinates only if in "Pick Coordinates" mode
+map.on('click', function (event) {
+  if (isPickingCoordinates) {
+    const { lat, lng } = event.latlng;
+
+    // Display the coordinates in the text box
+    const coordinatesBox = document.getElementById('coordinates');
+    if (coordinatesBox) {
+      coordinatesBox.value = `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+    }
+
+    // Exit "Pick Coordinates" mode after picking
+    isPickingCoordinates = false;
+    pickCoordinatesBtn.textContent = 'Pick Coordinates';
+  }
+});
+
 
 // Load OpenStreetMap tiles
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -263,6 +294,20 @@ async function makeAiQuery(inputString) {
   }
 }
 
+function performAiSearch() {
+  // Get the value from the input element with id "search"
+  const searchInput = document.getElementById("search").value;
+
+  // Call makeAiQuery with the input value
+  makeAiQuery(searchInput).then(responseData => {
+      // Process the response data as needed
+      if (responseData) {
+          console.log("AI Query Response:", responseData);
+          // TODO: display results
+      }
+  });
+}
+
 // Modal functionality
 const modal = document.getElementById('modal');
 const modalBody = document.getElementById('modal-body');
@@ -294,8 +339,3 @@ window.addEventListener('click', (event) => {
 // Initial render
 main()
 
-
-// TEST NOT WORKING
-// contactServer(myData).then(responseData => {
-//   console.log("Server response:", responseData);
-// });
