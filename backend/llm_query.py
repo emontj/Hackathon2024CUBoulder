@@ -40,11 +40,9 @@ def generate_search_parameters(client, user_query):
     # Extract and return the generated JSON response
 
     message = str(completion.choices[0].message.content)
-    message.replace('```json', '')
-    message.replace('```', '')
-    message.replace('```json', '')
-    message.replace('```', '')
-    
+    message = message.replace('```json', '')
+    message = message.replace('```', '')
+
     return message
 
 # Example usage
