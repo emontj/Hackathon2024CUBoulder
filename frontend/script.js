@@ -123,7 +123,9 @@ function openModal(jobId, jobs) {
 
     // Display the modal
     modal.style.display = 'block';
+
     modal.scrollTop = 0;
+    modalBody.scrollTop = 0;
   }
 }
 
