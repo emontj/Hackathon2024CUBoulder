@@ -402,7 +402,7 @@ function performAiSearch() {
       // Process the response data as needed
       if (responseData) {
           console.log("AI Query Response:", responseData);
-          // TODO: display results
+          renderJobSubset(responseData['filtered_data']);
       }
   });
 }

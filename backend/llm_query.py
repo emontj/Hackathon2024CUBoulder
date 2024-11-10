@@ -22,7 +22,7 @@ def generate_search_parameters(client, user_query):
                   "District": "Ash-Shobek",
                   "Economic sector": "Wholesale and Retail Trade",
                   "Enterprise size": "Micro",
-                  "Governorate": "Maan",
+                  "Governorat": "Maan",
                   "Is the company registered": "Yes",
                   "Phone Number": "0776101410",
                   "Sub-sector": "Retail trade (automotive)",
