@@ -2,6 +2,8 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import pandas as pd
 
+from backend.llm_query import ai_query
+
 app = Flask(__name__)
 CORS(app)
 df = pd.read_excel('./backend/dassadata.xlsx')
@@ -17,6 +19,24 @@ def test_dataframe():
     first_row = df
     print("First Row:", first_row)  # Print the first row in the console for debugging
     return jsonify(first_row)
+
+@app.route('/ai_query', methods=['POST'])
+def make_ai_query():
+    # Get the JSON data from the request
+    data = request.get_json()
+    
+    # Check if 'input' key exists in the JSON data and retrieve its value
+    if data and 'input' in data:
+        input_text = data['input']
+        
+        # Pass the input text to the ai_query function
+        output = ai_query(input_text)
+        
+        # Return the output as a JSON response
+        return jsonify({"output": output})
+    else:
+        # Return an error message if the 'input' key is missing
+        return jsonify({"error": "Missing 'input' in request data"}), 400
 
 # Route that receives a JSON object and dynamically filters the DataFrame
 @app.route('/query', methods=['POST'])

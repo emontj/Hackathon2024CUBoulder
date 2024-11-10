@@ -45,7 +45,7 @@ def generate_search_parameters(client, user_query):
 
     return message
 
-def get_json_object(user_query : str):
+def ai_query(user_query : str):
     with open('./backend/api_sk.txt', 'r') as file:
         secret_key = file.read() # just don't want my SK on git
 
@@ -56,4 +56,4 @@ def get_json_object(user_query : str):
 
 # Example usage
 if __name__ == '__main__':
-    print(get_json_object('Show me small car repair businesses in Maan that are recruiting for seasonal employees.'))
+    print(ai_query('Show me small car repair businesses in Maan that are recruiting for seasonal employees.'))

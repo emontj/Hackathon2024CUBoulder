@@ -207,6 +207,30 @@ document.getElementById('search').addEventListener('input', (event) => {
   renderJobListings(filteredJobs);
 });
 
+async function makeAiQuery(inputString) {
+  try {
+      const response = await fetch("http://127.0.0.1:5002/ai_query", {
+          method: "POST",
+          headers: {
+              "Accept": "application/json",
+              "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ input: inputString })
+      });
+
+      if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const responseData = await response.json();
+      console.log("Response received:", responseData);
+      return responseData;
+  } catch (error) {
+      console.error("Error:", error);
+      return null;
+  }
+}
+
 // Modal functionality
 const modal = document.getElementById('modal');
 const modalBody = document.getElementById('modal-body');
@@ -226,6 +250,7 @@ window.addEventListener('click', (event) => {
 
 // Initial render
 main()
+
 
 // TEST NOT WORKING
 // contactServer(myData).then(responseData => {
