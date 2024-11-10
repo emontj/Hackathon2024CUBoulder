@@ -90,6 +90,11 @@ from flask import Response
 import pandas as pd
 import numpy as np
 
+import json
+from flask import Response
+import pandas as pd
+import numpy as np
+
 @app.route('/advanced_search', methods=['GET'])
 def perform_advanced_search():
     # Call advanced_search with the parameters from the request
@@ -107,12 +112,33 @@ def perform_advanced_search():
         expect_need=request.args.get('expect_need', type=lambda x: x.lower() == 'true')
     )
 
-    # Replace NaN and infinite values in DataFrame or list with None
+    # Column name mapping from current DataFrame columns to desired JSON schema
+    column_mapping = {
+        'phone_number': 'Phone Number',
+        'business_name': 'Business name:',
+        'district': 'District',
+        'do_you_consider_youth_18-29_years_from_the_local_community_for_employment': 'Do you consider youth (18-29 years) from the local community for employment?',
+        'do_you_expect_the_need_for_employees_in_the_next_year': 'Do you expect the need for employees in the next year?',
+        'do_you_have_any_current_available_vacancies': 'Do you have any current available vacancies?',
+        'sector': 'Economic sector:',
+        'subsector': 'Sub-sector:',
+        '_exact_location_latitude': '_Exact Location_latitude',
+        '_exact_location_longitude': '_Exact Location_longitude',
+        # Add mappings for all other required fields based on the schema you provided
+        # Example:
+        'number_of_job_vacancies': 'Number of job vacancies:',
+        'enterprise_size': 'Enterprise size (Micro, Small, Medium, Large)',
+        'please_specify_the_business_products_and_services': 'Please specify the business products and services',
+        # Continue with any additional mappings...
+    }
+
+    # Replace NaN and infinite values in DataFrame with None, if results are a DataFrame
     if isinstance(results, pd.DataFrame):
-        results = results.replace({np.nan: None, np.inf: None, -np.inf: None}).to_dict(orient='records')
+        results = results.replace({np.nan: None, np.inf: None, -np.inf: None}).rename(columns=column_mapping).to_dict(orient='records')
     elif isinstance(results, list):
+        # If already a list, iterate and apply mapping manually
         results = [
-            {k: (None if isinstance(v, float) and (np.isnan(v) or np.isinf(v)) else v)
+            {column_mapping.get(k, k): (None if isinstance(v, float) and (np.isnan(v) or np.isinf(v)) else v)
              for k, v in item.items()}
             for item in results
         ]
@@ -126,7 +152,6 @@ def perform_advanced_search():
 
     # Return as a JSON response
     return Response(json_data, content_type='application/json')
-
 
 if __name__ == '__main__':
     app.run(debug=True, port=5002)

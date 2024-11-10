@@ -234,6 +234,14 @@ function performAiSearch() {
   });
 }
 
+function renderJobSubset(newJobs) {
+  clearJobPostings();
+  clearMapMarkers();
+
+  renderMarkers(newJobs);
+  renderJobListings(newJobs);
+}
+
 // TEST
 // const myData = {
 //   district: ["Ash-Shobek", "Koorah"],
@@ -344,17 +352,7 @@ document.getElementById('advanced-search-form').addEventListener('submit', funct
       .then(data => {
           console.log(data);  // For debugging: log the returned data
 
-          // Clear any previous results
-          // const resultsContainer = document.getElementById('results');
-          // resultsContainer.innerHTML = '';
-
-          // Display the results
-          // data.forEach(row => {
-          //     const rowElement = document.createElement('div');
-          //     rowElement.classList.add('result-item');
-          //     rowElement.textContent = JSON.stringify(row);
-          //     resultsContainer.appendChild(rowElement);
-          // });
+          renderJobSubset(data);
       })
       .catch(error => console.error('Error:', error));
 });
