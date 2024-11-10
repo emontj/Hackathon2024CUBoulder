@@ -1,6 +1,6 @@
 # Hackathon2024CUBoulder
 
-This project won first place at the CU Boulder 2024 Data Science Hackathon for Q2.  It is a localized job finder for the nation of Jordan.  It supports AI-powered natural language search in both English and Arabic as well as conventional advanced search capabilities.  It is a full-stack application.  Design and development took place over a mere 12 hours.
+This project won first place at the CU Boulder 2024 Data Science Hackathon.  It is a localized job finder for the nation of Jordan.  It supports AI-powered natural language search in both English and Arabic as well as conventional advanced search capabilities.  It is a full-stack application.  Design and development took place over a mere 12 hours.
 
 ## Running this project
 
