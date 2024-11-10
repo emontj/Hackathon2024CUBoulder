@@ -38,12 +38,14 @@ Attached are some suggestions for how to improve upon this project
   - Specific models for Arabic, English, and any other languages.  Currently it is all translated by GPT 4o Mini
   - The AI prompt can be improved to mention all options for fields such as sector/subsector
   - The AI queries can interface with the distance backend for queries like "All jobs within 10 kilometers of some town that are retail"
+  - AI could support more characteristics in its prompting
 - Bug fixes to CRUD operations between the front and backends, which are sometimes finnicky
 - Mobile compatibility
 - Display of information for the job postings can be dressed up
 - Profile tab/saving preferences and alerts
 - Lazy loading/efficient loading of jobs
 - General UI polish like number of search results, loading indication, better animations/effects
+- Vector DB for search and information retrieval
 
 ### Known Bugs
 - The create a job functionality may throw CORS errors and may not work because of this.  It was working at some points and is likely not far off
